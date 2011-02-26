@@ -9,9 +9,7 @@ use Factory;
 
 
 my $surface = SDLx::App->new( eoq=> 1);
-my $tri = Factory::polygon(3, 0, 20 );
-
-SDL::GFX::Primitives::polygon_color( $surface, $tri->[0], $tri->[1], 4, 0xFF0000FF );
+my $tri = Factory::polygon( surf => $surface, verts => 5, color => 0xff00ffff, center => [200, 300], radius => 100 );
 
 $surface->update();
 
