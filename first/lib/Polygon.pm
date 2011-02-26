@@ -36,13 +36,25 @@ sub surf {
 
 # METHODS
 
-sub born {
+sub attach {
     my $self = shift;
+	my %options = @_;
+
+	if( $options{app} == $self->{surf} )
+	{
+		#no offsets for event handling needed or show handling needed
+		$self->_attach_app( @_ );
+	}
+	else
+	{
+		$self->_attach_offset( @_);
+	}
+
 
 }
 
-sub die {
-
+sub detach {
+	my $self = shift;
 }
 
 # PRIVATE FUNCTIONS
@@ -110,6 +122,20 @@ sub _calculate_regular_polygon {
 
     }
     return [ \@x, \@y ];
+}
+
+sub _attach_app
+{
+	my $self = shift;
+	my %options = @_;
+}
+
+sub _attach_offset
+{
+	my $self = shift;
+	my %options  = @_;
+
+
 }
 
 1;
