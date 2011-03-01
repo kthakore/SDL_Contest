@@ -3,8 +3,14 @@ use strict;
 use warnings;
 use Math::Trig;
 use Data::Dumper;
-use SDLx::Surface;
+
+use SDL;
+use SDL::Event;
+use SDL::Events;
+use SDLx::Sprite;
 use SDL::GFX::Primitives;
+
+use SDLx::Surface;
 
 sub new {
     my ( $class, %options ) = @_;
@@ -17,6 +23,14 @@ sub new {
 }
 
 # ATTRIBUTES
+
+sub x {
+	$_[0]->{sprite}->x( @_ )
+}
+
+sub y {
+	$_[0]->{sprite}->y( @_ )
+}
 
 sub min {
     $_[0]->{min};
@@ -40,16 +54,18 @@ sub attach {
     my $self = shift;
 	my %options = @_;
 
-	if( $options{app} == $self->{surf} )
-	{
-		#no offsets for event handling needed or show handling needed
-		$self->_attach_app( @_ );
-	}
-	else
-	{
-		$self->_attach_offset( @_);
-	}
+	die "Require app to be passed in!" unless $options{app};
 
+	$self->{app} = $options{app};
+
+	# Construct a Event Handler
+	$self->{event_handler_id} = $self->{app}->add_event_handler( sub { $self->_event_handler( @_ ) } );
+
+	# Construct a Show Handler
+	$self->{show_handler_id} = $self->{app}->add_show_handler( sub { $self->_show_handler( @_ ) } );
+
+	# Construct a Move Handler
+	$self->{move_hander_id} = $self->{app}->add_move_handler(sub { $self->_move_handler( @_ ) } );
 
 }
 
@@ -66,7 +82,12 @@ sub _construct {
 
     $surf = SDLx::Surface->new(%$self) unless $surf;
 
+	$self->{sprite} = SDLx::Sprite->new( surface => $surf );
+	$self->{sprite}->x( 10 );
+	$self->{sprite}->y( 10 );
     my $center = $self->{center};
+
+	$self->{surf}        = $surf;
 
     my $poly_points = $self->_calculate_regular_polygon();
 
@@ -82,8 +103,8 @@ sub _construct {
     );
 
     $surf->update();
-    $self->{surf}        = $surf;
     $self->{poly_points} = $poly_points;
+	( rand() > 0.5 ) ? $self->{v} = [0,rand()] : $self->{v} = [rand(),0] ;
 
 }
 
@@ -124,16 +145,35 @@ sub _calculate_regular_polygon {
     return [ \@x, \@y ];
 }
 
-sub _attach_app
+sub _show_handler
 {
 	my $self = shift;
-	my %options = @_;
+	my ($dt, $app) = @_;
+	
+	$self->{sprite}->draw( $self->{app} );	
+	$self->{app}->update();
+
 }
 
-sub _attach_offset
+sub _event_handler
 {
 	my $self = shift;
-	my %options  = @_;
+	my ($event, $app) = @_;
+
+	if( $event->type == SDL_MOUSEBUTTONDOWN )
+	{
+		my $click = [$event->button_x, $event->button_y];
+	}	
+
+}
+
+sub _move_handler
+{
+	my $self = shift;
+
+	my ($dt, $app, $time) = @_;
+	$self->{sprite}->x( $self->{sprite}->x() + ( $self->{v}->[0] * $dt ) );
+	$self->{sprite}->y( $self->{sprite}->y() + ( $self->{v}->[1] * $dt ) );
 
 
 }
