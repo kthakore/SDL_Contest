@@ -28,7 +28,7 @@ foreach ( 0 .. 5 ) {
         verts   => $sides,
         color   => $color,
         bgcolor => 0x00000011,
-        radius  => rand() * 25 + 10,
+        radius  => rand()*25 + 10,
         width   => 200,
         height  => 200,
         depth   => 32
