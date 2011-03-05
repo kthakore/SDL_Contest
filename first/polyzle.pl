@@ -13,7 +13,7 @@ my $app = SDLx::App->new(
     eoq   => 1,
     depth => 32,
     flags => SDL_HWSURFACE | SDL_DOUBLEBUF,
-    delay => 60,
+    delay => 20,
     icon  => 'data/icon.bmp'
 );
 
@@ -23,7 +23,7 @@ $app->add_show_handler(
 
 foreach ( 0 .. 5 ) {
     my $sides = ( rand() * 5 ) + 3;
-    my $color =  0x999999FF;
+    my $color =  0xFF5599FF;
     my $tri   = Polygon->new(
         verts   => $sides,
         color   => $color,

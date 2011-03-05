@@ -104,16 +104,16 @@ sub _construct {
     $self->{surf} = $surf;
 
     my $poly_points = $self->_calculate_regular_polygon();
-
+	
     $surf->draw_rect( [ 0, 0, $surf->w, $surf->h ], $self->{bgcolor} )
       if $self->{bgcolor};
     SDL::GFX::Primitives::filled_polygon_color(
         $self->{surf},      $poly_points->[0], $poly_points->[1],
-        $self->{verts} + 1, $self->{color}
+        $self->{verts} , $self->{color}
     );
     SDL::GFX::Primitives::aapolygon_color(
         $self->{surf},      $poly_points->[0], $poly_points->[1],
-        $self->{verts} + 1, $self->{color}
+        $self->{verts} , $self->{color}
     );
 
     $surf->update();
@@ -123,14 +123,14 @@ sub _construct {
 
 sub _calculate_regular_polygon {
     my $self = shift;
-    my $verts = $self->{verts} || 3;
-    return if $verts < 3;
-    my $rot_ang = $self->{rot}         || 45;
+    my $verts = int($self->{verts}) || 4;
+    $verts = 4 if $verts < 4;
+    my $rot_ang = $self->{rot}         || 0;
     my $radius  = $self->{radius}      || 50;
     my $cx      = $self->{center}->[0] || $self->{surf}->w / 2;
     my $cy      = $self->{center}->[1] || $self->{surf}->h / 2;
     my $angle   = deg2rad($rot_ang);
-    my $angle_inc = 2 * pi / $verts;
+    my $angle_inc = 2 * pi / ($verts-1);
 
     my @x;
     my @y;
@@ -140,7 +140,7 @@ sub _calculate_regular_polygon {
 
     $self->{min} = [ $x[0], $y[0] ];
     $self->{max} = [ $x[0], $y[0] ];
-    foreach ( 1 .. $verts ) {
+    foreach ( 0 .. $verts ) {
         $angle += $angle_inc;
         my $x = $radius * cos($angle) + $cx;
         my $y = $radius * sin($angle) + $cy;
