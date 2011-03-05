@@ -113,7 +113,7 @@ sub _construct {
     );
     SDL::GFX::Primitives::aapolygon_color(
         $self->{surf},      $poly_points->[0], $poly_points->[1],
-        $self->{verts} , $self->{color}
+        $self->{verts} , $self->{color} + 33
     );
 
     $surf->update();
