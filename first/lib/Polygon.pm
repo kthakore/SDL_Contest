@@ -104,7 +104,7 @@ sub _construct {
 
     $surf->update();
     $self->{poly_points} = $poly_points;
-	( rand() > 0.5 ) ? $self->{v} = [0,rand()] : $self->{v} = [rand(),0] ;
+	( rand() > 0.5 ) ? $self->{v} = [0,rand()*10] : $self->{v} = [rand()*10,0] ;
 
 }
 
@@ -149,9 +149,9 @@ sub _show_handler
 {
 	my $self = shift;
 	my ($dt, $app) = @_;
-	
+
+	$app->draw_rect( $self->{sprite}->rect(), 0x000000ff );
 	$self->{sprite}->draw( $self->{app} );	
-	$self->{app}->update();
 
 }
 
@@ -170,10 +170,12 @@ sub _event_handler
 sub _move_handler
 {
 	my $self = shift;
-
 	my ($dt, $app, $time) = @_;
-	$self->{sprite}->x( $self->{sprite}->x() + ( $self->{v}->[0] * $dt ) );
-	$self->{sprite}->y( $self->{sprite}->y() + ( $self->{v}->[1] * $dt ) );
+	my $x =  $self->{sprite}->x() + ( $self->{v}->[0] * $dt ); 
+	my $y =  $self->{sprite}->y() + ( $self->{v}->[1] * $dt ); 
+
+	$self->{sprite}->x( $x );
+	$self->{sprite}->y( $y );
 
 
 }

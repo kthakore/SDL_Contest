@@ -13,4 +13,6 @@ my $app = SDLx::App->new( title => "Polygon Trouble", eoq=> 1, depth => 32, flag
 my $tri = Polygon->new( verts => 5, color => 0xff00ffff, bgcolor => 0x00000011, radius => 20, width => 200, height => 200, depth => 32 );
 
 $tri->attach( app => $app );
+
+$app->add_show_handler( sub { $app->update() } );
 $app->run();
