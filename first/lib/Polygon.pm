@@ -150,7 +150,6 @@ sub _show_handler
 	my $self = shift;
 	my ($dt, $app) = @_;
 
-	$app->draw_rect( $self->{sprite}->rect(), 0x000000ff );
 	$self->{sprite}->draw( $self->{app} );	
 
 }
