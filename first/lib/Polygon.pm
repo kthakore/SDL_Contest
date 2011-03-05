@@ -58,12 +58,12 @@ sub attach {
 
 	my $app = $options{app};
     if ( rand() > 0.5 ) {
-        $self->{v} = [ 0, rand() * 10 ];
+        $self->{v} = [ 0, rand() * 10 + 1];
         $self->{sprite}->x( $app->w() * rand() );
         $self->{sprite}->y(0);
     }
     else {
-        $self->{v} = [ rand() * 10, 0 ];
+        $self->{v} = [ rand() * 10 + 1, 0 ];
         $self->{sprite}->y( $app->h() * rand() );
         $self->{sprite}->x(0);
 
@@ -155,6 +155,7 @@ sub _calculate_regular_polygon {
         push @y, $y;
 
     }
+	$self->{center} = [ $cx, $cy ];
     return [ \@x, \@y ];
 }
 
@@ -185,6 +186,12 @@ sub _move_handler {
     $self->{sprite}->x($x);
     $self->{sprite}->y($y);
 
+	if ( $self->{center}->[0] + $x > $app->w ) {
+	$self->{sprite}->x( 0 - $self->{center}->[0] )
+	}
+	if ( $self->{center}->[1] + $y > $app->h ) {
+	$self->{sprite}->y( 0 - $self->{center}->[1])
+	}
 }
 
 1;

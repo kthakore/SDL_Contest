@@ -27,7 +27,7 @@ foreach ( 0 .. 5 ) {
     my $tri   = Polygon->new(
         verts   => $sides,
         color   => $color,
-        bgcolor => 0x00000011,
+        bgcolor => 0x00000001,
         radius  => rand()*25 + 10,
         width   => 200,
         height  => 200,
