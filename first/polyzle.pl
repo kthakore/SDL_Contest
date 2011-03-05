@@ -23,7 +23,7 @@ $app->add_show_handler(
 
 foreach ( 0 .. 5 ) {
     my $sides = ( rand() * 5 ) + 3;
-    my $color = int( rand() * 0xffffffff ) + 0x11111111;
+    my $color =  0x999999FF;
     my $tri   = Polygon->new(
         verts   => $sides,
         color   => $color,

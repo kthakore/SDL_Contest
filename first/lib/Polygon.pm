@@ -25,11 +25,11 @@ sub new {
 # ATTRIBUTES
 
 sub x {
-	$_[0]->{sprite}->x( @_ )
+    $_[0]->{sprite}->x(@_);
 }
 
 sub y {
-	$_[0]->{sprite}->y( @_ )
+    $_[0]->{sprite}->y(@_);
 }
 
 sub min {
@@ -51,26 +51,42 @@ sub surf {
 # METHODS
 
 sub attach {
-    my $self = shift;
-	my %options = @_;
+    my $self    = shift;
+    my %options = @_;
 
-	die "Require app to be passed in!" unless $options{app};
+    die "Require app to be passed in!" unless $options{app};
 
-	$self->{app} = $options{app};
+	my $app = $options{app};
+    if ( rand() > 0.5 ) {
+        $self->{v} = [ 0, rand() * 10 ];
+        $self->{sprite}->x( $app->w() * rand() );
+        $self->{sprite}->y(0);
+    }
+    else {
+        $self->{v} = [ rand() * 10, 0 ];
+        $self->{sprite}->y( $app->h() * rand() );
+        $self->{sprite}->x(0);
 
-	# Construct a Event Handler
-	$self->{event_handler_id} = $self->{app}->add_event_handler( sub { $self->_event_handler( @_ ) } );
+    }
 
-	# Construct a Show Handler
-	$self->{show_handler_id} = $self->{app}->add_show_handler( sub { $self->_show_handler( @_ ) } );
+    $self->{app} = $options{app};
 
-	# Construct a Move Handler
-	$self->{move_hander_id} = $self->{app}->add_move_handler(sub { $self->_move_handler( @_ ) } );
+    # Construct a Event Handler
+    $self->{event_handler_id} =
+      $self->{app}->add_event_handler( sub { $self->_event_handler(@_) } );
+
+    # Construct a Show Handler
+    $self->{show_handler_id} =
+      $self->{app}->add_show_handler( sub { $self->_show_handler(@_) } );
+
+    # Construct a Move Handler
+    $self->{move_hander_id} =
+      $self->{app}->add_move_handler( sub { $self->_move_handler(@_) } );
 
 }
 
 sub detach {
-	my $self = shift;
+    my $self = shift;
 }
 
 # PRIVATE FUNCTIONS
@@ -82,12 +98,10 @@ sub _construct {
 
     $surf = SDLx::Surface->new(%$self) unless $surf;
 
-	$self->{sprite} = SDLx::Sprite->new( surface => $surf );
-	$self->{sprite}->x( 10 );
-	$self->{sprite}->y( 10 );
+    $self->{sprite} = SDLx::Sprite->new( surface => $surf );
     my $center = $self->{center};
 
-	$self->{surf}        = $surf;
+    $self->{surf} = $surf;
 
     my $poly_points = $self->_calculate_regular_polygon();
 
@@ -104,7 +118,6 @@ sub _construct {
 
     $surf->update();
     $self->{poly_points} = $poly_points;
-	( rand() > 0.5 ) ? $self->{v} = [0,rand()*10] : $self->{v} = [rand()*10,0] ;
 
 }
 
@@ -145,37 +158,32 @@ sub _calculate_regular_polygon {
     return [ \@x, \@y ];
 }
 
-sub _show_handler
-{
-	my $self = shift;
-	my ($dt, $app) = @_;
+sub _show_handler {
+    my $self = shift;
+    my ( $dt, $app ) = @_;
 
-	$self->{sprite}->draw( $self->{app} );	
-
-}
-
-sub _event_handler
-{
-	my $self = shift;
-	my ($event, $app) = @_;
-
-	if( $event->type == SDL_MOUSEBUTTONDOWN )
-	{
-		my $click = [$event->button_x, $event->button_y];
-	}	
+    $self->{sprite}->draw( $self->{app} );
 
 }
 
-sub _move_handler
-{
-	my $self = shift;
-	my ($dt, $app, $time) = @_;
-	my $x =  $self->{sprite}->x() + ( $self->{v}->[0] * $dt ); 
-	my $y =  $self->{sprite}->y() + ( $self->{v}->[1] * $dt ); 
+sub _event_handler {
+    my $self = shift;
+    my ( $event, $app ) = @_;
 
-	$self->{sprite}->x( $x );
-	$self->{sprite}->y( $y );
+    if ( $event->type == SDL_MOUSEBUTTONDOWN ) {
+        my $click = [ $event->button_x, $event->button_y ];
+    }
 
+}
+
+sub _move_handler {
+    my $self = shift;
+    my ( $dt, $app, $time ) = @_;
+    my $x = $self->{sprite}->x() + ( $self->{v}->[0] * $dt );
+    my $y = $self->{sprite}->y() + ( $self->{v}->[1] * $dt );
+
+    $self->{sprite}->x($x);
+    $self->{sprite}->y($y);
 
 }
 
