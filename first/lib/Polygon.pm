@@ -177,7 +177,10 @@ sub _event_handler {
     if ( $event->type == SDL_MOUSEBUTTONDOWN ) {
         my $click = [ $event->button_x, $event->button_y ];
 
-		$app->stash->{score} += int($self->{verts}) if $self->{sprite}->rect()->collidepoint( $event->button_x, $event->button_y );
+		my $x = $self->{sprite}->x();
+		my $y = $self->{sprite}->y();	
+		my @r = ($x + $self->{min}->[0], $y + $self->{min}->[1], $self->{max}->[0] - $self->{min}->[0],  $self->{max}->[1] - $self->{min}->[1] );
+		$app->stash->{score} += int($self->{verts}) if SDLx::Rect->new(@r)->collidepoint( $event->button_x, $event->button_y );
     }
 
 }
