@@ -3,6 +3,8 @@ use warnings;
 use SDL 2.532;
 use SDL::Video;
 use SDLx::App;
+use SDL::Color;
+use SDLx::Validate;
 use Data::Dumper;
 
 use lib 'lib';
@@ -23,10 +25,9 @@ $app->add_show_handler(
 
 foreach ( 0 .. 5 ) {
     my $sides = ( rand() * 5 ) + 3;
-    my $color =  0xFF5599FF;
-    my $tri   = Polygon->new(
+     my $tri   = Polygon->new(
         verts   => $sides,
-        color   => $color,
+        color   => rand_color(),
         bgcolor => 0x00000001,
         radius  => rand()*25 + 10,
         width   => 200,
@@ -40,3 +41,15 @@ foreach ( 0 .. 5 ) {
 }
 $app->add_show_handler( sub { $app->update() } );
 $app->run();
+
+
+sub rand_color{
+
+	my $r = int( rand() * 0xFF ) + 0x22;
+	my $g = int( rand() * 0xFF ) + 0x22;
+	my $b = int( rand() * 0xFF ) + 0x22;
+	my $color = SDL::Color->new( $r, $g, $b );
+
+	$color = SDLx::Validate::num_rgba( $color );
+	return $color;
+}

@@ -59,12 +59,12 @@ sub attach {
 
 	my $app = $options{app};
     if ( rand() > 0.5 ) {
-        $self->{v} = [ 0, rand() * 10 + 1];
+        $self->{v} = [ 0, rand() * 60 + 5];
         $self->{sprite}->x( $app->w() * rand() );
         $self->{sprite}->y(0);
     }
     else {
-        $self->{v} = [ rand() * 10 + 1, 0 ];
+        $self->{v} = [ rand() * 60 + 5, 0 ];
         $self->{sprite}->y( $app->h() * rand() );
         $self->{sprite}->x(0);
 
