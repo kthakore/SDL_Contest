@@ -5,6 +5,7 @@ use Math::Trig;
 use Data::Dumper;
 
 use SDL;
+use SDLx::Rect;
 use SDL::Event;
 use SDL::Events;
 use SDLx::Sprite;
@@ -175,6 +176,8 @@ sub _event_handler {
 
     if ( $event->type == SDL_MOUSEBUTTONDOWN ) {
         my $click = [ $event->button_x, $event->button_y ];
+
+		warn "Click happened at " if $self->{sprite}->rect()->collidepoint( $event->button_x, $event->button_y );
     }
 
 }
