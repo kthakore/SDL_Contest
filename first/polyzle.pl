@@ -5,6 +5,7 @@ use SDL::Video;
 use SDLx::App;
 use SDL::Color;
 use SDLx::Validate;
+use SDLx::Text;
 use Data::Dumper;
 
 use lib 'lib';
@@ -19,7 +20,10 @@ my $app = SDLx::App->new(
     icon  => 'data/icon.bmp'
 );
 
+$app->stash->{text} = SDLx::Text->new(); 
+
 $app->stash->{polygons} = [];
+$app->stash->{score} = 0;
 $app->add_show_handler(
     sub { $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 ); } );
 
@@ -39,6 +43,11 @@ foreach ( 0 .. 5 ) {
 
     push @{ $app->stash->{polygons} }, $tri;
 }
+$app->add_show_handler(
+    sub { $app->stash->{text}->write_to( $app, "Score: ".$app->stash->{score} ) } 
+	);
+
+
 $app->add_show_handler( sub { $app->update() } );
 $app->run();
 
