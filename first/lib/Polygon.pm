@@ -94,6 +94,7 @@ sub detach {
 sub _construct {
     my $self = shift;
 
+	$self->{bgcolor} = $self->{bgcolor} || 0x00000010;
     my $surf = $self->{surf};
 
     $surf = SDLx::Surface->new(%$self) unless $surf;
@@ -105,15 +106,16 @@ sub _construct {
 
     my $poly_points = $self->_calculate_regular_polygon();
 	
-    $surf->draw_rect( [ 0, 0, $surf->w, $surf->h ], $self->{bgcolor} )
-      if $self->{bgcolor};
+    $surf->draw_rect( [ 0, 0, $surf->w, $surf->h ], $self->{bgcolor});
     SDL::GFX::Primitives::filled_polygon_color(
         $self->{surf},      $poly_points->[0], $poly_points->[1],
         $self->{verts} , $self->{color}
     );
+
+
     SDL::GFX::Primitives::aapolygon_color(
         $self->{surf},      $poly_points->[0], $poly_points->[1],
-        $self->{verts} , $self->{color} + 33
+        $self->{verts} , 0x000000ff
     );
 
     $surf->update();
