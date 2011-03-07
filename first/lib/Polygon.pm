@@ -179,7 +179,8 @@ sub _event_handler {
 
 		my $x = $self->{sprite}->x();
 		my $y = $self->{sprite}->y();	
-		my @r = ($x + $self->{min}->[0], $y + $self->{min}->[1], $self->{max}->[0] - $self->{min}->[0],  $self->{max}->[1] - $self->{min}->[1] );
+		my @r = (  $x + $self->{min}->[0], $y + $self->{min}->[1], $self->{max}->[0] - $self->{min}->[0],  $self->{max}->[1] - $self->{min}->[1] + $self->{center}->[1]/2 );
+		
 		$app->stash->{score} += int($self->{verts}) if SDLx::Rect->new(@r)->collidepoint( $event->button_x, $event->button_y );
     }
 
@@ -193,6 +194,7 @@ sub _move_handler {
 
     $self->{sprite}->x($x);
     $self->{sprite}->y($y);
+
 
 	if ( $self->{center}->[0] + $x > $app->w ) {
 	$self->{sprite}->x( 0 - $self->{center}->[0] )

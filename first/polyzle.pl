@@ -43,13 +43,33 @@ foreach ( 0 .. 5 ) {
 
     push @{ $app->stash->{polygons} }, $tri;
 }
+
+$app->stash->{s_time} = SDL::get_ticks;	
+
+$app->add_move_handler(
+	sub {
+		$app->stash->{d_time} = int( (SDL::get_ticks() - $app->stash->{s_time})/1000);
+
+
+		$app->stop() if $app->stash->{d_time} > 29;
+	  }
+);
+
+
 $app->add_show_handler(
-    sub { $app->stash->{text}->write_to( $app, "Score: ".$app->stash->{score} ) } 
+    sub { 
+
+		$app->stash->{text}->write_to( $app, "Score: ".$app->stash->{score}."       Time: ".$app->stash->{d_time}."s" ); 
+
+		} 
 	);
 
+print " 4hr_drunk: I wrote this game really in four hours of sunday and I was drunk ... so it might not be great!\n Get the most points in 30secs! \n";
 
 $app->add_show_handler( sub { $app->update() } );
 $app->run();
+
+print "Score: ".$app->stash->{score}."\n";
 
 
 sub rand_color{
