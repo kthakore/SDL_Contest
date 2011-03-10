@@ -163,17 +163,10 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 
 		Uint8 r, b, g, a;
 	
-		r = pix >> 2;
-		b = pix >> 4;
+		a = pix >> 24;
+		b = pix >> 16;
 		g = pix >> 8;
-		a = pix >> 16;
-
-
-		Uint32 hsbo = rgb_to_hsb( r,b,g);
-
-		b = hsbo >> 4;
-		g = hsbo >> 8;
-		r = hsbo >> 16;
+		r = pix ;
 
 		stream[i]   = r;
 		stream[i+1] = g;
