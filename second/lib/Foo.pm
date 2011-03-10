@@ -8,7 +8,32 @@ use Inline C => <<'END';
 extern void mixaudio(void *unused, Uint8 *stream, int len);
 unsigned int c_x = 0;
 unsigned int c_y = 0;
+unsigned int song_progress =0;
+SDL_AudioCVT cvt;
 
+void print_wav_file(char* file)
+{
+    int index;
+    SDL_AudioSpec wave;
+    Uint8 *data;
+    Uint32 dlen;
+
+    /* Load the sound file and convert it to 16-bit stereo at 22kHz */
+    if ( SDL_LoadWAV(file, &wave, &data, &dlen) == NULL ) {
+        fprintf(stderr, "Couldn't load %s: %s\n", file, SDL_GetError());
+        return;
+    }
+    SDL_BuildAudioCVT(&cvt, wave.format, wave.channels, wave.freq,
+                            AUDIO_S16,   2,             22050);
+    cvt.buf = malloc(dlen*cvt.len_mult);
+    memcpy(cvt.buf, data, dlen);
+    cvt.len = dlen;
+    SDL_ConvertAudio(&cvt);
+    SDL_FreeWAV(data);
+
+
+
+}
 
 Uint32 rgb_to_hsb ( int r, int b, int g )
 {
@@ -150,15 +175,36 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 		r = hsbo >> 16;
 
 		stream[i]   = r;
-		stream[i+1] = r;
-		stream[i+2] = r;
-		stream[i+3] = r;
+		stream[i+1] = g;
+		stream[i+2] = b;
+		stream[i+3] = a;
 
+
+		if( i < cvt.len )
+		{
+			unsigned int sp = song_progress + i;
+			r = cvt.buf[sp];
+			g = cvt.buf[sp+1];
+			b = cvt.buf[sp+2];
+			a = cvt.buf[sp+3];
+			Uint32 pix;
+			pix += r << 24;
+			pix += g << 16;
+			pix += g << 8;
+			pix += a;
+
+			set_pixel( screen, c_x, c_y,  pix );
+
+
+		}
+		else
+		{
+		
 		set_pixel( screen, c_x, c_y,  0xFFFFFFFF );
-
+		}
 	}
 
-
+	song_progress += i;
 
 
 

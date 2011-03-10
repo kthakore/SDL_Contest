@@ -14,6 +14,8 @@ my $img = SDLx::Surface::load( image=>'test.bmp' );
 $img->blit( $app, [0,0,$img->w, $img->h], [0,0,$app->w, $app->h] );
 $app->update();
 
+Foo::print_wav_file("sample.wav");
+
 Foo::PlaySound(); 
 
 $app->add_show_handler( sub{ $app->update();} );
