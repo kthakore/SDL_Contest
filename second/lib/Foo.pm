@@ -131,7 +131,7 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 			 c_x = 0;
 		}
 
-		fprintf( stderr ," %d (%d,%d) \n",i,  c_x, c_y);
+//		fprintf( stderr ," %d (%d,%d) \n",i,  c_x, c_y);
 
 		Uint32 pix = get_pixel32( screen, c_x, c_y);
 
@@ -142,18 +142,17 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 		g = pix >> 8;
 		a = pix >> 16;
 
-/*
+
 		Uint32 hsbo = rgb_to_hsb( r,b,g);
 
 		b = hsbo >> 4;
 		g = hsbo >> 8;
 		r = hsbo >> 16;
-*/
 
-		stream[i] = r;
-		stream[i+1] = b;
-		stream[i+2] = g;
-		stream[i+3] = a;
+		stream[i]   = r;
+		stream[i+1] = r;
+		stream[i+2] = r;
+		stream[i+3] = r;
 
 		set_pixel( screen, c_x, c_y,  0xFFFFFFFF );
 
