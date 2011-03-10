@@ -188,10 +188,10 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 			b = cvt.buf[sp+2];
 			a = cvt.buf[sp+3];
 			Uint32 pix;
-			pix += r << 24;
-			pix += b << 16;
-			pix += g << 8;
-			pix += a;
+			pix += a << 24;
+			pix += g << 16;
+			pix += b << 8;
+			pix += r;
 
 			set_pixel( screen, c_x, c_y,  pix );
 
