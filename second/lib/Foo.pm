@@ -10,6 +10,69 @@ unsigned int c_x = 0;
 unsigned int c_y = 0;
 
 
+Uint32 rgb_to_hsb ( int r, int b, int g )
+{
+double hue, sat, bright;
+				
+		int cmax = (r > g) ? r : g;
+		if (b > cmax) {
+			cmax = b;
+			}
+
+		int cmin = (r < g) ? r : g;
+		if (b < cmin) {
+			cmin = b;
+			}
+								
+		bright = ( (double)cmax ) / 255.0;
+		if( cmax != 0 ) {
+			sat = ( (double)( cmax - cmin ) ) / ( (double) cmax );
+			}
+		else {
+			sat = 0;
+			}
+		if( sat == 0 ) {
+			hue = 0;
+			}
+		else {
+			double redc =
+				( (double)( cmax - r ) ) / ( (double)( cmax - cmin ) );
+			double greenc =
+				( (double) ( cmax - g ) ) / ( (double)( cmax - cmin ) );
+			double bluec =
+				( (double)( cmax - b ) ) / ( (double)( cmax - cmin ) );
+
+			if( r == cmax ) {
+				hue = bluec - greenc;
+				}
+			else if( g == cmax ) {
+				hue = 2.0 + redc - bluec;
+				}
+			else {
+				hue = 4.0 + greenc - redc;
+				}
+			hue = hue / 6.0;
+												
+			if( hue < 0 ) {
+				hue = hue + 1.0;
+				}
+			}
+
+	Uint32 ret;
+	Uint8 hu,sa,br;
+	hu = (int)(255 * hue);
+	sa = (int)(255 * sat);
+	br = (int)(255 * bright);
+
+	ret += (hu << 24);
+	ret += (sa << 16);
+	ret += (br << 8);
+
+	return ret; 
+
+}
+
+
 int _calc_offset ( SDL_Surface* surface, int x, int y )
 {	
 	int offset;
@@ -18,7 +81,7 @@ int _calc_offset ( SDL_Surface* surface, int x, int y )
 	return offset;
 }
 
-void set_pixel( SDL_Surface *surface, int x, int y )
+void set_pixel( SDL_Surface *surface, int x, int y, Uint32 val)
 {
 
 	int offset = _calc_offset( surface, x, y);
@@ -26,7 +89,7 @@ void set_pixel( SDL_Surface *surface, int x, int y )
 			if (SDL_LockSurface(surface) < 0) 
 				return;
 
-	((Uint32 *)surface->pixels)[offset] = 0xFFFFFFFF;
+	((Uint32 *)surface->pixels)[offset] = val;
 
 		// Unlock if needed
 		if (SDL_MUSTLOCK(surface)) 
@@ -58,15 +121,17 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 		{
 			c_x++;
 		}
-		else if( c_x == screen->w && c_y < screen->h)
+		else if( c_x >= screen->w && c_y < screen->h)
 		{
 			c_x = 0;
 			c_y++;
 		}
-		else if( c_x == screen->w &&c_y == screen->h)
+		else if( c_x == 0 && c_y >= screen->h)
 		{
-			c_x = 0; c_y = 0;
+			 c_y = 0;
 		}
+
+		fprintf( stderr ," (%d,%d) \n", c_x, c_y);
 
 		Uint32 pix = get_pixel32( screen, c_x, c_y);
 
@@ -77,12 +142,18 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 		g = pix >> 8;
 		a = pix >> 16;
 
+		Uint32 hsbo = rgb_to_hsb( r,b,g);
+
+		b = hsbo >> 4;
+		g = hsbo >> 8;
+		r = hsbo >> 16;
+
 		stream[i] = r; stream[i+1] = b; stream[i+2] = g; stream[i+3] = a;
 		stream[i+4] = r; stream[i+5] = b; stream[i+6] = g; stream[i+7] = a;
 		stream[i+8] = r; stream[i+9] = b; stream[i+10] = g; stream[i+11] = a;
 		stream[i+12] = r; stream[i+13] = b; stream[i+14] = g; stream[i+15] = a;
 
-		set_pixel( screen, c_x, c_y);
+		set_pixel( screen, c_x, c_y, c_x * c_x + c_y * c_y + SDL_GetTicks );
 
 	}
 
