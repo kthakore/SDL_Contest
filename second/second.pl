@@ -7,11 +7,18 @@ use SDL::Audio;
 use lib 'lib';
 use Foo;
 
-my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects", init => SDL_INIT_VIDEO | SDL_INIT_AUDIO );
+my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Synthesia Kinda", init => SDL_INIT_VIDEO | SDL_INIT_AUDIO );
 
-Foo::PlaySound('sample.wav'); 
+my $img = SDLx::Surface::load( image=>'test.bmp' );
 
-$app->add_show_handler( sub{ Foo::render(@_) } );
+$img->blit( $app, [0,0,$img->w, $img->h], [0,0,$app->w, $app->h] );
+
+$app->update();
+
+Foo::PlaySound(); 
+
+$app->add_show_handler( sub{ $app->update();} );
+
 
 $app->run();
 
