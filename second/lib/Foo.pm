@@ -114,46 +114,48 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 	int i;
 
 	SDL_Surface* screen = SDL_GetVideoSurface();
-	for( i =0; i < len; i+= 16 )
+	for( i =0; i < len; i+=4 )
 	{
 		
 		if( c_x < screen->w && c_y < screen->h)
 		{
-			c_x++;
-		}
-		else if( c_x >= screen->w && c_y < screen->h)
-		{
-			c_x = 0;
 			c_y++;
+		}
+		else if( c_y >= screen->h && c_x < screen->w)
+		{
+			c_y=0;
+			c_x++;
 		}
 		else if( c_x == 0 && c_y >= screen->h)
 		{
-			 c_y = 0;
+			 c_x = 0;
 		}
 
-		fprintf( stderr ," (%d,%d) \n", c_x, c_y);
+		fprintf( stderr ," %d (%d,%d) \n",i,  c_x, c_y);
 
 		Uint32 pix = get_pixel32( screen, c_x, c_y);
 
-		Uint8 r; Uint8 b; Uint8 g; Uint8 a;
+		Uint8 r, b, g, a;
 	
 		r = pix >> 2;
 		b = pix >> 4;
 		g = pix >> 8;
 		a = pix >> 16;
 
+/*
 		Uint32 hsbo = rgb_to_hsb( r,b,g);
 
 		b = hsbo >> 4;
 		g = hsbo >> 8;
 		r = hsbo >> 16;
+*/
 
-		stream[i] = r; stream[i+1] = b; stream[i+2] = g; stream[i+3] = a;
-		stream[i+4] = r; stream[i+5] = b; stream[i+6] = g; stream[i+7] = a;
-		stream[i+8] = r; stream[i+9] = b; stream[i+10] = g; stream[i+11] = a;
-		stream[i+12] = r; stream[i+13] = b; stream[i+14] = g; stream[i+15] = a;
+		stream[i] = r;
+		stream[i+1] = b;
+		stream[i+2] = g;
+		stream[i+3] = a;
 
-		set_pixel( screen, c_x, c_y, c_x * c_x + c_y * c_y + SDL_GetTicks );
+		set_pixel( screen, c_x, c_y,  0xFFFFFFFF );
 
 	}
 
