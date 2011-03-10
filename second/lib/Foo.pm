@@ -189,7 +189,7 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 			a = cvt.buf[sp+3];
 			Uint32 pix;
 			pix += r << 24;
-			pix += g << 16;
+			pix += b << 16;
 			pix += g << 8;
 			pix += a;
 
