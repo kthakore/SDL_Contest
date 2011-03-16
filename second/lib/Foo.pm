@@ -11,7 +11,7 @@ unsigned int c_y = 0;
 unsigned int song_progress =0;
 SDL_AudioCVT cvt;
 
-void print_wav_file(char* file)
+void load_wav_file(char* file)
 {
     int index;
     SDL_AudioSpec wave;
@@ -32,68 +32,6 @@ void print_wav_file(char* file)
     SDL_FreeWAV(data);
 
 
-
-}
-
-Uint32 rgb_to_hsb ( int r, int b, int g )
-{
-double hue, sat, bright;
-				
-		int cmax = (r > g) ? r : g;
-		if (b > cmax) {
-			cmax = b;
-			}
-
-		int cmin = (r < g) ? r : g;
-		if (b < cmin) {
-			cmin = b;
-			}
-								
-		bright = ( (double)cmax ) / 255.0;
-		if( cmax != 0 ) {
-			sat = ( (double)( cmax - cmin ) ) / ( (double) cmax );
-			}
-		else {
-			sat = 0;
-			}
-		if( sat == 0 ) {
-			hue = 0;
-			}
-		else {
-			double redc =
-				( (double)( cmax - r ) ) / ( (double)( cmax - cmin ) );
-			double greenc =
-				( (double) ( cmax - g ) ) / ( (double)( cmax - cmin ) );
-			double bluec =
-				( (double)( cmax - b ) ) / ( (double)( cmax - cmin ) );
-
-			if( r == cmax ) {
-				hue = bluec - greenc;
-				}
-			else if( g == cmax ) {
-				hue = 2.0 + redc - bluec;
-				}
-			else {
-				hue = 4.0 + greenc - redc;
-				}
-			hue = hue / 6.0;
-												
-			if( hue < 0 ) {
-				hue = hue + 1.0;
-				}
-			}
-
-	Uint32 ret;
-	Uint8 hu,sa,br;
-	hu = (int)(255 * hue);
-	sa = (int)(255 * sat);
-	br = (int)(255 * bright);
-
-	ret += (hu << 24);
-	ret += (sa << 16);
-	ret += (br << 8);
-
-	return ret; 
 
 }
 
@@ -168,13 +106,13 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 		g = pix >> 8;
 		r = pix ;
 
-		stream[i]   = r;
-		stream[i+1] = g;
-		stream[i+2] = b;
-		stream[i+3] = a;
+		stream[i]   += r + a ;
+		stream[i+1] += g + b;
+		stream[i+2] += b + g;
+		stream[i+3] += a + r;
 
 
-		if( i < cvt.len )
+		if( i < cvt.len && 0)
 		{
 			unsigned int sp = song_progress + i;
 			r = cvt.buf[sp];
@@ -182,10 +120,10 @@ void mixaudio(void *unused, Uint8 *stream, int len)
 			b = cvt.buf[sp+2];
 			a = cvt.buf[sp+3];
 			Uint32 pix;
-			pix += r << 24;
-			pix += b << 16;
-			pix += g << 8;
-			pix += a;
+			pix += a << 24;
+			pix += g << 16;
+			pix += b << 8;
+			pix += r;
 
 			set_pixel( screen, c_x, c_y,  pix );
 
