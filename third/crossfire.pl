@@ -25,6 +25,7 @@ sub new {
 }
 
 sub init_grid {
+
     my $app = $_[0]->{app};
 
     my $grid = SDLx::Surface->new( w => 600, h => 600 );
@@ -41,7 +42,7 @@ sub init_grid {
 
     $grid->blit( $app, [ 0, 0, 600, 600 ], [ 0, 0, 600, 600 ] );
 
-    $app->stash( grid => $grid );
+    $app->stash( grid_surf => $grid_surf );
 
 }
 
