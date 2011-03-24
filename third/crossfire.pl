@@ -4,6 +4,50 @@ use SDL;
 use SDLx::App;
 use SDLx::Surface;
 
+package Enemy;
+
+sub new {
+    my ( $class, $app ) = @_;
+    my $self = bless { app => $app }, $class;
+
+    $app->add_show_handler( sub { $self->show_handler(@_) } );
+    $app->add_move_handler( sub { $self->move_handler(@_) } );
+
+    return $self;
+}
+
+sub init_surface {
+	my $self = shift;
+
+	my $surface = SDLx::Surface->new( width => 40, height => 40 );
+	
+	$self->{surf} = $surface; 	
+}
+
+sub show_handler {
+    my $self = shift;
+
+}
+
+sub move_handler {
+    my $self = shift;
+
+}
+
+package Laser;
+
+sub next_position {
+
+}
+
+sub draw {
+    my ($app) = @_;
+}
+
+sub check_hit {
+
+}
+
 package Ship;
 use SDL::Event;
 
@@ -14,7 +58,7 @@ sub new {
 
     $self->{x}        = 40 * 7;
     $self->{y}        = 40 * 6;
-    $self->{vel}      = 5;
+    $self->{vel}      = 10;
     $self->{y_vel}    = 0;
     $self->{x_vel}    = 0;
     $self->{move_dir} = SDLK_RIGHT;
@@ -86,11 +130,6 @@ sub event_handler {
     }
     elsif ( $event->type == SDL_KEYUP ) {
         my $key = $event->key_sym;
-        $self->{moving} = 0
-          if ( $key == SDLK_UP
-            || $key == SDLK_DOWN
-            || $key == SDLK_LEFT
-            || $key == SDLK_RIGHT );
 
     }
 
