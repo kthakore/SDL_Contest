@@ -7,9 +7,10 @@ use SDLx::Surface;
 package Enemy;
 
 sub new {
-    my ( $class, $app ) = @_;
-    my $self = bless { app => $app }, $class;
-
+    my ( $class) = shift;
+    my $self = bless { @_ }, $class;
+	my $app = $self->{app};
+	$self->init_surface();
     $app->add_show_handler( sub { $self->show_handler(@_) } );
     $app->add_move_handler( sub { $self->move_handler(@_) } );
 
@@ -19,13 +20,24 @@ sub new {
 sub init_surface {
 	my $self = shift;
 
-	my $surface = SDLx::Surface->new( width => 40, height => 40 );
+	my $surf = SDLx::Surface->new( width => 40, height => 40 );
 	
-	$self->{surf} = $surface; 	
+	$surf->draw_rect( [ 10, 10, 20, 20 ], [ 255, 0,   0,   255 ] );
+    $surf->draw_rect( [ 12, 12, 16, 16 ], [ 255, 255, 255, 255 ] );
+
+    $surf->update();
+
+
+	$self->{surf} = $surf; 	
 }
 
 sub show_handler {
-    my $self = shift;
+	my $self = shift;
+    my $dt   = shift;
+    my $app  = shift;
+    $self->{surf}
+      ->blit( $app, [ 0, 0, 40, 40 ], [ $self->{x}, $self->{y}, 40, 40 ] );
+
 
 }
 
@@ -91,6 +103,7 @@ sub event_handler {
                 {
                     my $x_D = int( $self->{x} / 40 );
                     if ( $x_D % 2 ) {
+			#			warn "Failed going vertical, at $x_D and ".$self->{x}.", ".$self->{y};
                         return;
                     }
                     else {
@@ -109,6 +122,7 @@ sub event_handler {
                 {
                     my $y_D = int( $self->{y} / 40 );
                     if ( $y_D % 2 ) {
+			#			warn "Failed going vertical, at $y_D and ".$self->{x}.", ".$self->{y}.". ".($self->{x}/40).", ". ($self->{y}/40 ).".";
                         return;
                     }
                     else {
@@ -206,7 +220,6 @@ sub new {
     my $self = bless { app => $app }, shift;
 
     $self->init_grid();
-
     $app->add_show_handler(
         sub {
 
@@ -215,6 +228,10 @@ sub new {
 
         }
     );
+
+
+	$self->init_enemies();
+
 
     my $ship = Ship->new($app);
     $self->{ship} = $ship;
@@ -248,6 +265,34 @@ sub init_grid {
     $grid->blit( $app, [ 0, 0, 600, 600 ], [ 0, 0, 600, 600 ] );
 
     $_[0]->{grid_surf} = $grid;
+
+}
+
+sub init_enemies
+{
+	my $self = shift;
+
+	my @enemies = ();
+	foreach(2..8)
+	{
+		my $enemy = Enemy->new(app => $self->{app}, x=> $_*40, y => 0);
+		push @enemies, $enemy;
+	}
+
+	foreach(1..2)
+	{
+		my $enemy = Enemy->new(app => $self->{app}, x=> 0, y => $_*120);
+		push @enemies, $enemy;
+	}
+	foreach(3..5)
+	{
+		my $enemy = Enemy->new(app => $self->{app}, x=> 14*40, y => $_*40);
+		push @enemies, $enemy;
+	}
+
+
+
+	$self->{enemies} = \@enemies;
 
 }
 
