@@ -11,8 +11,14 @@ sub new {
     my $self = bless { @_ }, $class;
 	my $app = $self->{app};
 	$self->init_surface();
-    $app->add_show_handler( sub { $self->show_handler(@_) } );
+
+	$self->{vel} = 10;
+	$self->{status} = 'm'; #or changing direction
+	$self->get_next_dir();
+	$app->add_show_handler( sub { $self->show_handler(@_) } );
     $app->add_move_handler( sub { $self->move_handler(@_) } );
+
+	
 
     return $self;
 }
@@ -37,26 +43,57 @@ sub show_handler {
     my $app  = shift;
     $self->{surf}
       ->blit( $app, [ 0, 0, 40, 40 ], [ $self->{x}, $self->{y}, 40, 40 ] );
-
-
 }
 
 sub move_handler {
     my $self = shift;
+	my $dt = shift;
+	if ( $self->{status} =~ 'm' )
+	{
+        my $key = $self->{move_dir};
 
+        $self->{y} -= $self->{vel} * $dt if $key == 0;
+        $self->{y} += $self->{vel} * $dt if $key == 1;
+        $self->{x} -= $self->{vel} * $dt if $key == 2;
+        $self->{x} += $self->{vel} * $dt if $key == 3;
+
+		#collision check
+		if($self->{y} > 600 - 39) 
+		{
+			$self->{y} = 600 - 40;
+			$self->get_next_dir();
+		}
+		elsif( $self->{y} < 1 )
+		{
+			$self->{y} = 0;
+			$self->get_next_dir();
+		}
+		if($self->{x} > 600 - 39) 
+		{
+			$self->{x} = 600 - 40;
+			$self->get_next_dir();
+		}
+		elsif( $self->{x} < 1 )
+		{
+			$self->{x} = 0;
+			$self->get_next_dir();
+		}
+
+		#random enabled check for crossroads
+	}	
+	else
+	{
+		$self->get_next_dir();
+	}
+	
 }
 
-package Laser;
+sub get_next_dir {
+	my $self = shift;
 
-sub next_position {
+	$self->{move_dir} = int(rand()*4); #move randomly in one of the four direction 
 
-}
-
-sub draw {
-    my ($app) = @_;
-}
-
-sub check_hit {
+	
 
 }
 
@@ -74,6 +111,7 @@ sub new {
     $self->{y_vel}    = 0;
     $self->{x_vel}    = 0;
     $self->{move_dir} = SDLK_RIGHT;
+	$self->{next_move} = 0;
 
     $app->add_event_handler( sub { $self->event_handler(@_) } );
     $app->add_show_handler( sub  { $self->show_handler(@_) } );
@@ -95,15 +133,14 @@ sub event_handler {
         {
 
             # Trying to move vertical?
-            if ( $key == SDLK_DOWN || $key == SDLK_UP ) {
+            if ( $key == SDLK_DOWN || $key == SDLK_UP || $self->{next_move} == 1 ) {
 
                 # Were going horizontal
                 if (   $self->{move_dir} == SDLK_LEFT
                     || $self->{move_dir} == SDLK_RIGHT )
                 {
-                    my $x_D = int( $self->{x} / 40 );
+                    my $x_D = _cor_move_off( $self->{move_dir}, $self->{x} );
                     if ( $x_D % 2 ) {
-			#			warn "Failed going vertical, at $x_D and ".$self->{x}.", ".$self->{y};
                         return;
                     }
                     else {
@@ -120,7 +157,7 @@ sub event_handler {
                 if (   $self->{move_dir} == SDLK_UP
                     || $self->{move_dir} == SDLK_DOWN )
                 {
-                    my $y_D = int( $self->{y} / 40 );
+                    my $y_D = _cor_move_off( $self->{move_dir}, $self->{y} );
                     if ( $y_D % 2 ) {
 			#			warn "Failed going vertical, at $y_D and ".$self->{x}.", ".$self->{y}.". ".($self->{x}/40).", ". ($self->{y}/40 ).".";
                         return;
@@ -146,6 +183,21 @@ sub event_handler {
         my $key = $event->key_sym;
 
     }
+
+}
+
+# Calculates the right offset for the sprite
+# And when to turn
+sub _cor_move_off
+{
+	my ( $md, $val ) = @_;
+
+	my $ret ;
+
+	$ret = int( ($val -20 )/40 ) if( $md == SDLK_DOWN || $md == SDLK_LEFT);
+	$ret = int( ($val + 20 )/40 ) if( $md == SDLK_UP || $md == SDLK_RIGHT);
+
+	return $ret;
 
 }
 
