@@ -68,7 +68,7 @@ sub move_handler {
 			$self->{y} = 0;
 			$self->get_next_dir();
 		}
-		if($self->{x} > 600 - 39) 
+		elsif($self->{x} > 600 - 39) 
 		{
 			$self->{x} = 600 - 40;
 			$self->get_next_dir();
@@ -90,6 +90,7 @@ sub move_handler {
 
 sub get_next_dir {
 	my $self = shift;
+
 
 	$self->{move_dir} = int(rand()*4); #move randomly in one of the four direction 
 
