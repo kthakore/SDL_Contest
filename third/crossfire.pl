@@ -91,10 +91,36 @@ sub move_handler {
 sub get_next_dir {
 	my $self = shift;
 
+	my @valid_turns =(); #fill up with 0 1 2 3 (up, down, left, right )
 
-	$self->{move_dir} = int(rand()*4); #move randomly in one of the four direction 
+	if ( _cor_move_off( $self->{move_dir}, $self->{x} ) % 2)
+	{
+		push @valid_turns, 0;
+		push @valid_turns, 1;
+	}
+	if ( _cor_move_off( $self->{move_dir}, $self->{y} ) % 2)
+	{
+		push @valid_turns, 2;
+		push @valid_turns, 3;
+
+	}
+
+	$self->{move_dir} = $valid_turns[int(rand()*$#valid_turns)]; #move randomly in one of the valid_directions
 
 	
+
+}
+
+sub _cor_move_off
+{
+	my ( $md, $val ) = @_;
+
+	my $ret ;
+
+	$ret = int( ($val -20 )/40 ) if( $md == 1 || $md == 2);
+	$ret = int( ($val + 20 )/40 ) if( $md == 0 || $md == 3);
+
+	return $ret;
 
 }
 
