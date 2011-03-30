@@ -28,8 +28,8 @@ sub init_surface {
 
 	my $surf = SDLx::Surface->new( width => 40, height => 40 );
 	
-	$surf->draw_rect( [ 10, 10, 20, 20 ], [ 255, 0,   0,   255 ] );
-    $surf->draw_rect( [ 12, 12, 16, 16 ], [ 255, 255, 255, 255 ] );
+	$surf->draw_rect( [ 10, 10, 20, 20 ], [ 255, 255,   255,   255 ] );
+    $surf->draw_rect( [ 12, 12, 16, 16 ], [ 255, 0, 0, 255 ] );
 
     $surf->update();
 
