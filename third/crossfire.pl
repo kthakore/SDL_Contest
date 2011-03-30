@@ -17,9 +17,6 @@ sub new {
 	$self->get_next_dir();
 	$app->add_show_handler( sub { $self->show_handler(@_) } );
     $app->add_move_handler( sub { $self->move_handler(@_) } );
-
-	
-
     return $self;
 }
 
@@ -91,7 +88,7 @@ sub move_handler {
 sub get_next_dir {
 	my $self = shift;
 
-	my @valid_turns =(); #fill up with 0 1 2 3 (up, down, left, right )
+	my @valid_turns =($self->{move_dir}); #fill up with 0 1 2 3 (up, down, left, right )
 
 	if ( _cor_move_off( $self->{move_dir}, $self->{x} ) % 2)
 	{
@@ -105,7 +102,7 @@ sub get_next_dir {
 
 	}
 
-	$self->{move_dir} = $valid_turns[int(rand()*$#valid_turns)]; #move randomly in one of the valid_directions
+	$self->{move_dir} = int(rand()*4);#$valid_turns[int(rand()*$#valid_turns)]; #move randomly in one of the valid_directions
 
 	
 
@@ -117,10 +114,10 @@ sub _cor_move_off
 
 	my $ret ;
 
-	$ret = int( ($val -20 )/40 ) if( $md == 1 || $md == 2);
-	$ret = int( ($val + 20 )/40 ) if( $md == 0 || $md == 3);
+	#$ret = int( ($val -20 )/40 ) if( $md == 1 || $md == 2);
+	#$ret = int( ($val + 20 )/40 ) if( $md == 0 || $md == 3);
 
-	return $ret;
+	return int( $val /40 );
 
 }
 
